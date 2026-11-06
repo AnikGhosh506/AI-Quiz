@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { Trophy, Award, Users, Calendar, ArrowRight, ShieldCheck, Check } from 'lucide-react';
+import { Trophy, Award, Users, Calendar, ArrowRight, ShieldCheck, Check, ArrowLeft } from 'lucide-react';
 import { StudentUser } from '../services/authService';
 
 interface CompetitionsViewProps {
   currentUser: StudentUser | null;
   onOpenAuth: (mode: 'signin' | 'signup') => void;
   onTakeTest: () => void;
+  onBack?: () => void;
 }
 
 export const CompetitionsView: React.FC<CompetitionsViewProps> = ({
   currentUser,
   onOpenAuth,
   onTakeTest,
+  onBack,
 }) => {
   const [registeredCompetitions, setRegisteredCompetitions] = useState<string[]>([]);
 
@@ -57,14 +59,27 @@ export const CompetitionsView: React.FC<CompetitionsViewProps> = ({
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      {/* Back Button to Previous Page */}
+      {onBack && (
+        <div className="mb-4 text-left">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0e1610] hover:bg-[#142316] border border-white/15 hover:border-[#a3e635]/50 text-xs font-semibold text-neutral-300 hover:text-[#bef264] transition-all cursor-pointer group shadow-sm active:scale-95"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#a3e635] group-hover:-translate-x-1 transition-transform" />
+            <span>← Back to Previous Page</span>
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#142316] border border-[#a3e635]/30 text-xs text-[#bef264] font-medium mb-1.5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full aurix-3d-glass-btn text-xs text-[#bef264] font-semibold mb-1.5">
             <Trophy className="w-3.5 h-3.5 text-[#a3e635]" />
             <span>Join Competitions · Test Your Mettle</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight aurix-3d-heading">
             Competitions
           </h1>
           <p className="text-xs sm:text-sm text-neutral-300">
@@ -74,7 +89,7 @@ export const CompetitionsView: React.FC<CompetitionsViewProps> = ({
 
         <button
           onClick={onTakeTest}
-          className="aurix-pill-button px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#040604] flex items-center gap-1.5 shadow-sm active:scale-95"
+          className="aurix-3d-button px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#040604] flex items-center gap-1.5 cursor-pointer"
         >
           <span>Practise Before Competing</span>
           <ArrowRight className="w-4 h-4 text-[#040604]" />
@@ -83,18 +98,18 @@ export const CompetitionsView: React.FC<CompetitionsViewProps> = ({
 
       {/* Events List */}
       <div className="space-y-4 mb-10">
-        <h2 className="text-xl font-bold text-white">Upcoming Tournaments</h2>
+        <h2 className="text-xl font-bold text-white drop-shadow-sm">Upcoming Tournaments</h2>
         <div className="grid grid-cols-1 gap-4">
           {upcomingEvents.map((event) => {
             const isRegistered = registeredCompetitions.includes(event.id);
             return (
               <div
                 key={event.id}
-                className="aurix-glass-card rounded-2xl p-5 sm:p-6 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-[#a3e635]/40 transition-all"
+                className="aurix-3d-card rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-[#bef264] px-2.5 py-0.5 rounded-md bg-[#142316] border border-[#a3e635]/30">
+                    <span className="text-xs font-bold text-[#bef264] px-2.5 py-0.5 rounded-md bg-[#142316] border border-[#a3e635]/40 shadow-sm">
                       {event.targetClass}
                     </span>
                     <span className="text-xs text-neutral-400 flex items-center gap-1">
@@ -102,13 +117,13 @@ export const CompetitionsView: React.FC<CompetitionsViewProps> = ({
                       {event.date}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-white drop-shadow-sm">
                     {event.title}
                   </h3>
                   <div className="flex items-center gap-4 text-xs text-neutral-400">
                     <span>{event.format}</span>
                     <span>·</span>
-                    <span className="flex items-center gap-1 text-[#a3e635]">
+                    <span className="flex items-center gap-1 text-[#a3e635] font-semibold">
                       <Users className="w-3.5 h-3.5" />
                       {event.participants}
                     </span>
@@ -124,7 +139,7 @@ export const CompetitionsView: React.FC<CompetitionsViewProps> = ({
                   ) : (
                     <button
                       onClick={() => handleRegister(event.id)}
-                      className="aurix-pill-button px-5 py-2.5 rounded-xl text-xs font-semibold text-[#040604] flex items-center gap-1.5 active:scale-95"
+                      className="aurix-3d-button px-5 py-2.5 rounded-xl text-xs font-extrabold text-[#040604] flex items-center gap-1.5 cursor-pointer"
                     >
                       <span>Join Competition</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#040604]" />

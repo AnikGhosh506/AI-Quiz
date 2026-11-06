@@ -118,10 +118,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenAuth }) => {
               </li>
               <li>
                 <button
-                  onClick={() => onNavigate('study-materials')}
-                  className="hover:text-[#bef264] transition-colors cursor-pointer"
+                  onClick={() => onNavigate('parent-portal')}
+                  className="hover:text-[#bef264] transition-colors cursor-pointer text-[#a3e635] font-medium"
                 >
-                  Explore Study Materials
+                  Parent Portal &amp; Oversight
                 </button>
               </li>
             </ul>

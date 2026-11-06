@@ -1,0 +1,44 @@
+{
+  "activeSessionEmail": "arpitaghosh2167@gmail.com",
+  "users": {
+    "arpitaghosh2167@gmail.com": {
+      "id": "student_arpita_2167",
+      "name": "Arpita Ghosh",
+      "email": "arpitaghosh2167@gmail.com",
+      "classLevel": "Class 10",
+      "joinedDate": "Nov 2026",
+      "schoolName": "Delhi Public School (DPS RK Puram)",
+      "schoolBoard": "CBSE",
+      "schoolCity": "New Delhi",
+      "studentIdNumber": "DPS-2026-8912",
+      "rollNumber": "18",
+      "verificationMethod": "ai_digital",
+      "verificationStatus": "verified",
+      "verifiedAt": "Nov 5, 2026",
+      "authProvider": "email",
+      "aiConfidenceScore": 98,
+      "aiVerificationSummary": "AI Authenticated Official School ID Card.",
+      "isEmailVerified": true
+    },
+    "student@school.edu": {
+      "id": "student_demo_101",
+      "name": "Saheb Mukherjee",
+      "email": "student@school.edu",
+      "classLevel": "Class 10",
+      "joinedDate": "Oct 2026",
+      "schoolName": "St. Xavier's Collegiate School",
+      "schoolBoard": "ICSE",
+      "schoolCity": "Kolkata",
+      "studentIdNumber": "STX-2026-4011",
+      "rollNumber": "07",
+      "verificationMethod": "ai_digital",
+      "verificationStatus": "verified",
+      "verifiedAt": "Oct 14, 2026",
+      "authProvider": "email",
+      "aiConfidenceScore": 96,
+      "aiVerificationSummary": "AI Authenticated Official School ID Card.",
+      "isEmailVerified": true
+    }
+  },
+  "parentSession": null
+}

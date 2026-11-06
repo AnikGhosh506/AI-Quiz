@@ -5,50 +5,368 @@
   body {
     background-color: #040604;
     color: #e5e7eb;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
+    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
+  h1, h2, h3, h4, h5, h6, .aurix-heading {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* ================= HIGH CONTRAST MODE STYLES ================= */
+.high-contrast {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast .aurix-glass,
+.high-contrast .aurix-glass-card,
+.high-contrast .aurix-3d-card,
+.high-contrast .aurix-glass-element {
+  background: #080d09 !important;
+  border: 2px solid #ccff00 !important;
+  border-bottom: 4px solid #ccff00 !important;
+  box-shadow: 0 0 25px rgba(204, 255, 0, 0.35) !important;
+}
+
+.high-contrast .aurix-3d-button,
+.high-contrast .aurix-pill-button,
+.high-contrast .aurix-glass-btn {
+  background: #ccff00 !important;
+  color: #000000 !important;
+  font-weight: 900 !important;
+  border-bottom: 4px solid #ffffff !important;
+  box-shadow: 0 0 30px rgba(204, 255, 0, 0.75) !important;
+}
+
+.high-contrast text-neutral-300,
+.high-contrast text-neutral-400 {
+  color: #f3f4f6 !important;
+}
+
+/* ================= FROSTED GLASS EFFECTS FOR TEXT, BUTTONS & ELEMENTS ================= */
+
+/* Luminous Glass Text Effect */
+.aurix-glass-text {
+  background: linear-gradient(180deg, #ffffff 0%, #e2f89c 35%, #bef264 70%, #a3e635 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(163, 230, 53, 0.4));
+}
+
+.aurix-glass-title {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 40%, #bef264 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 16px rgba(163, 230, 53, 0.35));
+}
+
+/* Frosted Glass Element Container */
+.aurix-glass-element {
+  background: linear-gradient(135deg, rgba(20, 34, 22, 0.75) 0%, rgba(8, 14, 9, 0.88) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(163, 230, 53, 0.3);
+  border-bottom: 2.5px solid rgba(163, 230, 53, 0.5);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.aurix-glass-element:hover {
+  border-color: rgba(190, 242, 100, 0.75);
+  box-shadow: 0 14px 38px -8px rgba(163, 230, 53, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Frosted Glass Button */
+.aurix-glass-btn {
+  background: linear-gradient(180deg, rgba(28, 48, 30, 0.85) 0%, rgba(12, 22, 13, 0.92) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(163, 230, 53, 0.4);
+  border-bottom: 3.5px solid rgba(163, 230, 53, 0.65);
+  box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, border-color 0.25s;
+  will-change: transform;
+}
+
+.aurix-glass-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: #bef264;
+  border-bottom-color: #bef264;
+  box-shadow: 0 14px 35px -4px rgba(163, 230, 53, 0.45), 0 0 25px rgba(190, 242, 100, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.45);
+}
+
+.aurix-glass-btn:active {
+  transform: translateY(1px);
+  border-bottom-width: 1.5px;
 }
 
 /* Glassmorphism and ambient atmospheric effects */
 .aurix-glass {
-  background: rgba(10, 16, 11, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(132, 204, 22, 0.12);
+  background: rgba(10, 16, 11, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(163, 230, 53, 0.22);
+  box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  will-change: transform;
 }
 
 .aurix-glass-card {
-  background: linear-gradient(135deg, rgba(14, 22, 15, 0.72) 0%, rgba(6, 10, 7, 0.88) 100%);
+  background: linear-gradient(145deg, rgba(16, 26, 18, 0.85) 0%, rgba(6, 10, 7, 0.95) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(132, 204, 22, 0.15);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(163, 230, 53, 0.22);
+  border-bottom: 2.5px solid rgba(163, 230, 53, 0.45);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s, border-color 0.35s;
+  will-change: transform;
 }
 
 .aurix-glass-card:hover {
-  border-color: rgba(163, 230, 53, 0.38);
-  box-shadow: 0 12px 40px -12px rgba(132, 204, 22, 0.18), 0 0 20px 0 rgba(132, 204, 22, 0.08) inset;
-  transform: translateY(-3px);
+  border-color: rgba(190, 242, 100, 0.6);
+  border-bottom: 3.5px solid #bef264;
+  box-shadow: 0 24px 50px -12px rgba(163, 230, 53, 0.3), 0 0 25px rgba(163, 230, 53, 0.15) inset, 0 12px 30px -10px rgba(0, 0, 0, 0.9);
+  transform: translateY(-4px);
+}
+
+/* Ultra Smooth Floating 3D Glass Card Keyframes */
+@keyframes aurix-card-float {
+  0%, 100% {
+    transform: translateY(0px) perspective(900px) rotateX(0deg);
+    box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.85), 0 0 22px rgba(163, 230, 53, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  }
+  50% {
+    transform: translateY(-8px) perspective(900px) rotateX(1.8deg);
+    box-shadow: 0 26px 52px -10px rgba(0, 0, 0, 0.88), 0 0 32px 4px rgba(163, 230, 53, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* 3D Interactive Glass Card styling with Smooth Floating Animation */
+.aurix-3d-card {
+  background: linear-gradient(145deg, rgba(18, 30, 20, 0.9) 0%, rgba(8, 14, 9, 0.96) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(163, 230, 53, 0.28);
+  border-bottom: 3.5px solid rgba(163, 230, 53, 0.55);
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.85), 0 0 25px rgba(163, 230, 53, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s, border-color 0.35s;
+  transform-style: preserve-3d;
+  animation: aurix-card-float 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+/* Staggered floating rhythm for cards in feature grids */
+.grid > .aurix-3d-card:nth-child(2n) {
+  animation-delay: 1.5s;
+}
+
+.grid > .aurix-3d-card:nth-child(3n) {
+  animation-delay: 3s;
+}
+
+.grid > .aurix-3d-card:nth-child(4n) {
+  animation-delay: 4.5s;
+}
+
+.aurix-3d-card:hover {
+  animation: none;
+  border-color: rgba(190, 242, 100, 0.8);
+  border-bottom: 4px solid #bef264;
+  box-shadow: 0 30px 65px -12px rgba(163, 230, 53, 0.4), 0 0 35px rgba(163, 230, 53, 0.25) inset, 0 15px 35px -10px rgba(0, 0, 0, 0.92);
+  transform: translateY(-8px) perspective(900px) rotateX(2.5deg) scale(1.02);
+}
+
+/* 3D Primary Glass Button with Breathing Glowing Aura */
+.aurix-3d-button {
+  background: linear-gradient(180deg, #bef264 0%, #a3e635 45%, #65a30d 100%);
+  color: #040604;
+  font-weight: 700;
+  border-bottom: 4px solid #365314;
+  box-shadow: 0 8px 22px -2px rgba(163, 230, 53, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s;
+  position: relative;
+  animation: aurix-button-aura 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+.aurix-3d-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: linear-gradient(180deg, #d9f99d 0%, #bef264 45%, #84cc16 100%);
+  border-bottom: 5px solid #4d7c0f;
+  animation: none;
+  box-shadow: 0 14px 40px 4px rgba(190, 242, 100, 0.75), 0 0 40px 10px rgba(163, 230, 53, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.aurix-3d-button:active {
+  transform: translateY(2px) scale(0.99);
+  border-bottom: 1px solid #365314;
+  box-shadow: 0 2px 10px rgba(163, 230, 53, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.25);
+  animation: none;
+}
+
+/* 3D Secondary Glass Button with Soft Breathing Glow */
+.aurix-3d-glass-btn {
+  background: linear-gradient(180deg, rgba(22, 38, 24, 0.9) 0%, rgba(10, 18, 11, 0.95) 100%);
+  border: 1px solid rgba(163, 230, 53, 0.35);
+  border-bottom: 3.5px solid rgba(163, 230, 53, 0.55);
+  box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+  color: #e5e7eb;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s, border-color 0.2s, box-shadow 0.25s;
+  animation: aurix-glass-aura 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+.aurix-3d-glass-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(190, 242, 100, 0.75);
+  border-bottom: 4px solid #bef264;
+  color: #ffffff;
+  animation: none;
+  box-shadow: 0 14px 35px -6px rgba(163, 230, 53, 0.45), 0 0 30px rgba(190, 242, 100, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.35);
+}
+
+.aurix-3d-glass-btn:active {
+  transform: translateY(2px);
+  border-bottom: 1px solid rgba(163, 230, 53, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+  animation: none;
+}
+
+/* 3D Logo Emblem with Breathing Aura */
+.aurix-3d-logo {
+  background: linear-gradient(135deg, #1d3320 0%, #0c180e 50%, #040804 100%);
+  border: 1.5px solid rgba(163, 230, 53, 0.5);
+  border-bottom: 3px solid #65a30d;
+  box-shadow: 0 10px 25px -4px rgba(163, 230, 53, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -4px 8px rgba(0, 0, 0, 0.75);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s, border-color 0.35s;
+  transform-style: preserve-3d;
+  animation: aurix-logo-aura 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+.aurix-3d-logo:hover {
+  transform: perspective(600px) rotateX(8deg) rotateY(-8deg) translateZ(8px) scale(1.08);
+  border-color: #bef264;
+  animation: none;
+  box-shadow: 0 16px 38px -4px rgba(163, 230, 53, 0.65), inset 0 3px 6px rgba(255, 255, 255, 0.75), 0 0 32px rgba(190, 242, 100, 0.55);
+}
+
+/* 3D Icon Box styling */
+.aurix-3d-icon-box {
+  background: linear-gradient(135deg, #1a301c 0%, #0b180d 100%);
+  border: 1px solid rgba(163, 230, 53, 0.45);
+  border-bottom: 2.5px solid #65a30d;
+  box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: aurix-glass-aura 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, box-shadow;
+}
+
+.aurix-3d-icon-box:hover {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 14px 28px -4px rgba(163, 230, 53, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.45);
+  border-color: #bef264;
+  animation: none;
+}
+
+/* 3D Headings with Breathing Aura */
+.aurix-3d-heading {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.025em;
+  animation: aurix-heading-aura 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.aurix-3d-lime-heading {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.025em;
+  animation: aurix-lime-heading-aura 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .aurix-pill-button {
-  background: linear-gradient(135deg, #a3e635 0%, #65a30d 100%);
+  background: linear-gradient(180deg, #bef264 0%, #a3e635 45%, #65a30d 100%);
   color: #040604;
-  font-weight: 600;
+  font-weight: 700;
+  border-bottom: 3.5px solid #365314;
+  box-shadow: 0 6px 20px -2px rgba(163, 230, 53, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.6);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: aurix-button-aura 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
 }
 
 .aurix-pill-button:hover {
-  background: linear-gradient(135deg, #bef264 0%, #84cc16 100%);
-  box-shadow: 0 0 24px rgba(163, 230, 53, 0.45);
-  transform: translateY(-1px);
+  background: linear-gradient(180deg, #d9f99d 0%, #bef264 45%, #84cc16 100%);
+  box-shadow: 0 12px 30px rgba(163, 230, 53, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  border-bottom-color: #4d7c0f;
+  animation: none;
 }
 
-.aurix-subtle-glow {
-  box-shadow: 0 0 80px 40px rgba(132, 204, 22, 0.06);
+.aurix-pill-button:active {
+  transform: translateY(1px);
+  border-bottom-width: 1px;
+  animation: none;
 }
 
-/* Subtle botanical organic noise overlay */
-.aurix-vignette {
-  background: radial-gradient(circle at 50% 20%, transparent 40%, rgba(4, 6, 4, 0.75) 85%, #040604 100%);
+/* Keyframes for Smooth Breathing Aura Animations */
+@keyframes aurix-button-aura {
+  0%, 100% {
+    box-shadow: 0 8px 22px -2px rgba(163, 230, 53, 0.45), 0 0 16px 2px rgba(163, 230, 53, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 12px 32px 4px rgba(190, 242, 100, 0.8), 0 0 36px 10px rgba(163, 230, 53, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  }
+}
+
+@keyframes aurix-glass-aura {
+  0%, 100% {
+    box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.7), 0 0 12px rgba(163, 230, 53, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+    border-color: rgba(163, 230, 53, 0.35);
+  }
+  50% {
+    box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.8), 0 0 26px 4px rgba(190, 242, 100, 0.42), inset 0 1px 2px rgba(255, 255, 255, 0.35);
+    border-color: rgba(190, 242, 100, 0.7);
+  }
+}
+
+@keyframes aurix-logo-aura {
+  0%, 100% {
+    box-shadow: 0 10px 25px -4px rgba(163, 230, 53, 0.35), 0 0 15px rgba(163, 230, 53, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -4px 8px rgba(0, 0, 0, 0.75);
+    border-color: rgba(163, 230, 53, 0.5);
+  }
+  50% {
+    box-shadow: 0 14px 34px -2px rgba(190, 242, 100, 0.7), 0 0 32px 6px rgba(190, 242, 100, 0.5), inset 0 3px 6px rgba(255, 255, 255, 0.65), inset 0 -4px 8px rgba(0, 0, 0, 0.75);
+    border-color: rgba(190, 242, 100, 0.85);
+  }
+}
+
+@keyframes aurix-heading-aura {
+  0%, 100% {
+    text-shadow: 0 2px 0 #152918, 0 4px 0 #0d1a0f, 0 8px 20px rgba(0, 0, 0, 0.85), 0 0 20px rgba(163, 230, 53, 0.25);
+  }
+  50% {
+    text-shadow: 0 2px 0 #152918, 0 4px 0 #0d1a0f, 0 8px 20px rgba(0, 0, 0, 0.85), 0 0 48px rgba(190, 242, 100, 0.65), 0 0 75px rgba(163, 230, 53, 0.4);
+  }
+}
+
+@keyframes aurix-lime-heading-aura {
+  0%, 100% {
+    text-shadow: 0 2px 0 #365314, 0 4px 0 #1a2e09, 0 8px 22px rgba(0, 0, 0, 0.9), 0 0 25px rgba(190, 242, 100, 0.4);
+  }
+  50% {
+    text-shadow: 0 2px 0 #365314, 0 4px 0 #1a2e09, 0 8px 22px rgba(0, 0, 0, 0.9), 0 0 55px rgba(190, 242, 100, 0.8), 0 0 80px rgba(163, 230, 53, 0.5);
+  }
 }

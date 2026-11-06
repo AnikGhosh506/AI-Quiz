@@ -9,6 +9,7 @@ import {
   QuizResult,
 } from '../data/quizData';
 import { StudentUser, authService } from '../services/authService';
+import { offlineStorageService } from '../services/offlineStorageService';
 import {
   CheckCircle2,
   XCircle,
@@ -23,6 +24,7 @@ import {
   Bookmark,
   Share2,
   Check,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface TakeTestViewProps {
@@ -30,6 +32,7 @@ interface TakeTestViewProps {
   onOpenAuth: (mode: 'signin' | 'signup') => void;
   onViewProgress: () => void;
   onAskAIAboutQuestion?: (questionText: string) => void;
+  onBack?: () => void;
 }
 
 export const TakeTestView: React.FC<TakeTestViewProps> = ({
@@ -37,6 +40,7 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
   onOpenAuth,
   onViewProgress,
   onAskAIAboutQuestion,
+  onBack,
 }) => {
   // Setup state
   const [selectedClass, setSelectedClass] = useState<string>(
@@ -55,6 +59,11 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
   const [calculatedResult, setCalculatedResult] = useState<QuizResult | null>(null);
+
+  // Real-time AI explanations state per question attempt
+  const [realtimeExplanations, setRealtimeExplanations] = useState<
+    Record<number, { text: string; isCorrect: boolean; loading: boolean }>
+  >({});
 
   // Update subjects & chapters when class changes
   useEffect(() => {
@@ -117,11 +126,56 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
     setCalculatedResult(null);
   };
 
-  const handleSelectOption = (optionIndex: number) => {
+  const handleSelectOption = async (optionIndex: number) => {
     setUserAnswers((prev) => ({
       ...prev,
       [currentIndex]: optionIndex,
     }));
+
+    const q = questions[currentIndex];
+    if (!q) return;
+
+    const isCorr = optionIndex === q.correctAnswer;
+
+    setRealtimeExplanations((prev) => ({
+      ...prev,
+      [currentIndex]: {
+        text: '',
+        isCorrect: isCorr,
+        loading: true,
+      },
+    }));
+
+    try {
+      const response = await fetch('/api/ask-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `Student selected option "${q.options[optionIndex]}" for question "${q.question}". Correct answer is "${q.options[q.correctAnswer]}". Explain in 2 concise sentences why this choice is ${isCorr ? 'correct' : 'incorrect'} and give a key concept tip.`,
+          studentClass: selectedClass,
+          subject: selectedSubject,
+        }),
+      });
+
+      const data = await response.json();
+      setRealtimeExplanations((prev) => ({
+        ...prev,
+        [currentIndex]: {
+          text: data.reply || q.explanation,
+          isCorrect: isCorr,
+          loading: false,
+        },
+      }));
+    } catch {
+      setRealtimeExplanations((prev) => ({
+        ...prev,
+        [currentIndex]: {
+          text: q.explanation,
+          isCorrect: isCorr,
+          loading: false,
+        },
+      }));
+    }
   };
 
   const handleSkipQuestion = () => {
@@ -190,6 +244,21 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
     setCalculatedResult(result);
     setIsCompleted(true);
 
+    // Save test result to PWA offline cache for offline viewing
+    offlineStorageService.saveTestResult({
+      id: result.id,
+      testTitle: result.testTitle,
+      subject: result.subject,
+      classLevel: result.classLevel,
+      score: result.correctCount,
+      totalQuestions: result.totalQuestions,
+      percentage: result.score,
+      date: result.date,
+      timeSpentSeconds: 300 - secondsRemaining,
+      weakTopics,
+      strongTopics,
+    });
+
     // If student is logged in, automatically save their score
     if (currentUser) {
       authService.saveQuizResult(result);
@@ -221,13 +290,26 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      {/* Back Button to Previous Page */}
+      {onBack && (
+        <div className="mb-4 text-left">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0e1610] hover:bg-[#142316] border border-white/15 hover:border-[#a3e635]/50 text-xs font-semibold text-neutral-300 hover:text-[#bef264] transition-all cursor-pointer group shadow-sm active:scale-95"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#a3e635] group-hover:-translate-x-1 transition-transform" />
+            <span>← Back to Previous Page</span>
+          </button>
+        </div>
+      )}
+
       {/* Top Banner / Heading */}
       <div className="mb-8 text-center sm:text-left">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#142316] border border-[#a3e635]/30 text-xs text-[#bef264] font-medium mb-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full aurix-3d-glass-btn text-xs text-[#bef264] font-semibold mb-2">
           <BookOpen className="w-3.5 h-3.5 text-[#a3e635]" />
           <span>Interactive Student Tests · Classes 6 to 12</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight aurix-3d-heading">
           Take a Test
         </h1>
         <p className="text-sm sm:text-base text-neutral-300 mt-1">
@@ -239,13 +321,13 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
         /* SCREEN 1: TEST CONFIGURATION & INSTANT DEMO */
         <div className="space-y-6">
           {/* Quick Demo Card - No Login Needed */}
-          <div className="aurix-glass-card rounded-2xl p-5 sm:p-6 border border-[#a3e635]/30 bg-gradient-to-r from-[#0c150e] to-[#080d09] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_30px_rgba(163,230,53,0.1)]">
+          <div className="aurix-3d-card rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#a3e635] flex items-center justify-center sm:justify-start gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 Try Without Signing In
               </span>
-              <h3 className="text-lg sm:text-xl font-bold text-white">
+              <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-sm">
                 5-Question Quick Demo Test
               </h3>
               <p className="text-xs sm:text-sm text-neutral-300">
@@ -254,7 +336,7 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
             </div>
             <button
               onClick={handleStartDemoQuiz}
-              className="aurix-pill-button px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#040604] flex items-center gap-2 shrink-0 active:scale-95 transition-transform"
+              className="aurix-3d-button px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#040604] flex items-center gap-2 shrink-0 cursor-pointer"
             >
               <span>Start Demo Test</span>
               <ArrowRight className="w-4 h-4 text-[#040604]" />
@@ -262,9 +344,9 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
           </div>
 
           {/* Custom Test Builder */}
-          <div className="aurix-glass-card rounded-2xl p-6 sm:p-8 border border-white/10 space-y-6">
-            <div className="border-b border-white/5 pb-4">
-              <h2 className="text-xl font-bold text-white">Custom Chapter Test</h2>
+          <div className="aurix-3d-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <div className="border-b border-white/10 pb-4">
+              <h2 className="text-xl font-bold text-white drop-shadow-sm">Custom Chapter Test</h2>
               <p className="text-xs sm:text-sm text-neutral-400">
                 Choose your exact class and topic for targeted practice.
               </p>
@@ -272,7 +354,7 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
 
             {/* Step 1: Choose Class */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#a3e635] mb-2.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#a3e635] mb-2.5">
                 Step 1: Choose Your Class
               </label>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
@@ -282,10 +364,10 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
                     <button
                       key={cls}
                       onClick={() => setSelectedClass(cls)}
-                      className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-medium transition-all text-center border cursor-pointer ${
+                      className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center border cursor-pointer ${
                         isSelected
-                          ? 'bg-[#18281a] border-[#a3e635] text-[#bef264] shadow-[0_0_15px_rgba(163,230,53,0.25)]'
-                          : 'bg-[#090e0a] border-white/5 text-neutral-300 hover:border-white/20'
+                          ? 'aurix-3d-glass-btn text-[#bef264] border-[#a3e635] transform -translate-y-0.5'
+                          : 'bg-[#090e0a] border-white/10 text-neutral-300 hover:border-white/25'
                       }`}
                     >
                       {cls}
@@ -297,7 +379,7 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
 
             {/* Step 2: Choose Subject */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#a3e635] mb-2.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#a3e635] mb-2.5">
                 Step 2: Choose Your Subject
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
@@ -307,10 +389,10 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
                     <button
                       key={sub}
                       onClick={() => setSelectedSubject(sub)}
-                      className={`p-3 rounded-xl text-left text-xs sm:text-sm font-medium transition-all border cursor-pointer ${
+                      className={`p-3 rounded-xl text-left text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-[#18281a] border-[#a3e635] text-[#bef264] shadow-[0_0_15px_rgba(163,230,53,0.25)]'
-                          : 'bg-[#090e0a] border-white/5 text-neutral-300 hover:border-white/20'
+                          ? 'aurix-3d-glass-btn text-[#bef264] border-[#a3e635] transform -translate-y-0.5'
+                          : 'bg-[#090e0a] border-white/10 text-neutral-300 hover:border-white/25'
                       }`}
                     >
                       {sub}
@@ -322,7 +404,7 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
 
             {/* Step 3: Choose Chapter */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#a3e635] mb-2.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#a3e635] mb-2.5">
                 Step 3: Select Chapter
               </label>
               <select
@@ -339,13 +421,13 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
             </div>
 
             {/* Step 4: Start custom test button */}
-            <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs text-neutral-400">
+            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-xs text-neutral-400 font-medium">
                 5 Questions · 5 Minutes Timer · Detailed Explanations
               </div>
               <button
                 onClick={handleStartCustomTest}
-                className="w-full sm:w-auto aurix-pill-button px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm text-[#040604] flex items-center justify-center gap-2 shadow-sm active:scale-95"
+                className="w-full sm:w-auto aurix-3d-button px-7 py-3 rounded-xl font-extrabold text-xs sm:text-sm text-[#040604] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Start Your Test Now</span>
                 <ArrowRight className="w-4 h-4 text-[#040604]" />
@@ -427,6 +509,44 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
               })}
             </div>
 
+            {/* Real-time AI Generated Explanation immediately after question attempt */}
+            {userAnswers[currentIndex] !== undefined && (
+              <div
+                className={`p-4 sm:p-5 rounded-2xl border transition-all animate-in fade-in duration-300 space-y-2 ${
+                  realtimeExplanations[currentIndex]?.isCorrect
+                    ? 'bg-[#0f1d12] border-emerald-500/40 text-emerald-200'
+                    : 'bg-[#1a0f0f] border-red-500/40 text-red-200'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-[#bef264]">
+                    <Sparkles className="w-3.5 h-3.5 text-[#a3e635]" />
+                    <span>Real-Time AI Instant Explanation</span>
+                  </span>
+                  <span
+                    className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                      realtimeExplanations[currentIndex]?.isCorrect
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                    }`}
+                  >
+                    {realtimeExplanations[currentIndex]?.isCorrect ? '✓ Correct Answer' : '✕ Incorrect Attempt'}
+                  </span>
+                </div>
+
+                {realtimeExplanations[currentIndex]?.loading ? (
+                  <div className="flex items-center gap-2 text-xs text-[#bef264] py-1">
+                    <span className="w-2 h-2 rounded-full bg-[#a3e635] animate-pulse" />
+                    <span>Gemini AI generating instant step-by-step breakdown...</span>
+                  </div>
+                ) : (
+                  <p className="text-xs sm:text-sm text-neutral-100 leading-relaxed font-medium">
+                    {realtimeExplanations[currentIndex]?.text || currentQ?.explanation}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Controls: Prev, Skip, Next, Submit */}
             <div className="pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
               <button
@@ -481,9 +601,17 @@ export const TakeTestView: React.FC<TakeTestViewProps> = ({
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
                     Your Results: {calculatedResult.testTitle}
                   </h2>
-                  <p className="text-xs text-neutral-400 mt-1">
-                    Taken on {calculatedResult.date} · {calculatedResult.classLevel}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <p className="text-xs text-neutral-400">
+                      Taken on {calculatedResult.date} · {calculatedResult.classLevel}
+                    </p>
+                    {currentUser && (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] text-[#bef264] bg-[#142316] border border-[#a3e635]/30 px-2.5 py-0.5 rounded-lg">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#a3e635]" />
+                        <span>{currentUser.name} ({currentUser.schoolName || 'Verified School'})</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Score badge */}

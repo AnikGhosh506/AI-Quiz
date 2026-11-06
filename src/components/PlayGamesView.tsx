@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { Play, Sparkles, CheckCircle2, RotateCcw, Trophy, Brain, Zap, Clock } from 'lucide-react';
+import { Play, Sparkles, CheckCircle2, RotateCcw, Trophy, Brain, Zap, Clock, ArrowLeft } from 'lucide-react';
 
-export const PlayGamesView: React.FC = () => {
+interface PlayGamesViewProps {
+  onBack?: () => void;
+}
+
+export const PlayGamesView: React.FC<PlayGamesViewProps> = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState<'chess' | 'speedmath' | 'memory'>('chess');
 
   // --- Chess State ---
@@ -48,13 +52,26 @@ export const PlayGamesView: React.FC = () => {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      {/* Back Button to Previous Page */}
+      {onBack && (
+        <div className="mb-4 text-left">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0e1610] hover:bg-[#142316] border border-white/15 hover:border-[#a3e635]/50 text-xs font-semibold text-neutral-300 hover:text-[#bef264] transition-all cursor-pointer group shadow-sm active:scale-95"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#a3e635] group-hover:-translate-x-1 transition-transform" />
+            <span>← Back to Previous Page</span>
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#142316] border border-[#a3e635]/30 text-xs text-[#bef264] font-medium mb-1.5">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full aurix-3d-glass-btn text-xs text-[#bef264] font-semibold mb-1.5">
           <Brain className="w-3.5 h-3.5 text-[#a3e635]" />
           <span>Play Brain Games · Refresh Your Mind</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl font-extrabold text-white tracking-tight aurix-3d-heading">
           Play Games
         </h1>
         <p className="text-xs sm:text-sm text-neutral-300">
@@ -63,12 +80,12 @@ export const PlayGamesView: React.FC = () => {
       </div>
 
       {/* Game Selector Tabs */}
-      <div className="flex gap-2 sm:gap-3 mb-6 p-1.5 bg-[#0e1610] rounded-2xl border border-white/5 max-w-md">
+      <div className="flex gap-2 sm:gap-3 mb-6 p-1.5 bg-[#0e1610] rounded-2xl border border-white/10 max-w-md">
         <button
           onClick={() => setActiveTab('chess')}
-          className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
+          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
             activeTab === 'chess'
-              ? 'bg-[#1a2d1d] text-[#bef264] border border-[#a3e635]/30'
+              ? 'aurix-3d-glass-btn text-[#bef264] border-[#a3e635]'
               : 'text-neutral-400 hover:text-white'
           }`}
         >
@@ -76,9 +93,9 @@ export const PlayGamesView: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('speedmath')}
-          className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
+          className={`flex-1 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
             activeTab === 'speedmath'
-              ? 'bg-[#1a2d1d] text-[#bef264] border border-[#a3e635]/30'
+              ? 'aurix-3d-glass-btn text-[#bef264] border-[#a3e635]'
               : 'text-neutral-400 hover:text-white'
           }`}
         >
@@ -88,13 +105,13 @@ export const PlayGamesView: React.FC = () => {
 
       {/* GAME 1: CHESS */}
       {activeTab === 'chess' && (
-        <div className="aurix-glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-[#a3e635]/20 space-y-6">
-          <div className="flex items-center justify-between border-b border-white/5 pb-4">
+        <div className="aurix-3d-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div>
-              <span className="text-xs uppercase font-semibold text-[#a3e635]">
+              <span className="text-xs uppercase font-bold text-[#a3e635]">
                 Tactical Puzzle #142 · White to Move
               </span>
-              <h2 className="text-xl sm:text-2xl font-bold text-white mt-0.5">
+              <h2 className="text-xl sm:text-2xl font-bold text-white mt-0.5 drop-shadow-sm">
                 The Royal Knight Fork
               </h2>
             </div>

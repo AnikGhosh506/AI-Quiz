@@ -57,7 +57,7 @@ export const FeatureCards: React.FC<FeatureCardsProps> = ({ onNavigate }) => {
         <span className="text-xs uppercase tracking-widest text-[#a3e635] font-semibold mb-2 inline-block">
           Explore What You Can Do
         </span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight aurix-3d-heading">
           Three ways to learn smarter on AURIX.
         </h2>
         <p className="mt-3 text-sm sm:text-base text-neutral-300">
@@ -69,68 +69,75 @@ export const FeatureCards: React.FC<FeatureCardsProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
         {cards.map((card, index) => {
           const Icon = card.icon;
-          const isHovered = hoveredCard === index;
 
           return (
             <div
               key={card.id}
               onMouseEnter={() => setHoveredCard(index)}
               onMouseLeave={() => setHoveredCard(null)}
-              className="aurix-glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden group border border-[#a3e635]/15 hover:border-[#a3e635]/40"
+              className="aurix-3d-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group min-h-[340px]"
             >
-              <div>
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <span className="text-[11px] font-bold tracking-wider uppercase text-[#a3e635]">
-                    {card.kicker}
-                  </span>
-                  <div className="w-8 h-8 rounded-lg bg-[#0e1710] border border-[#a3e635]/25 flex items-center justify-center text-[#a3e635]">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                </div>
-
-                <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-2 group-hover:text-[#bef264] transition-colors">
-                  {card.title}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed mb-6">
-                  {card.description}
-                </p>
-              </div>
-
-              {/* Visual Asset */}
-              <div className="relative rounded-xl overflow-hidden mb-6 aspect-[4/3] bg-[#070b08] border border-white/10 group-hover:border-[#a3e635]/30 transition-all duration-300">
+              {/* Card Background Image: Low opacity background acting as texture rather than a separate image */}
+              <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                 <img
                   src={card.imageSrc}
                   alt={card.alt}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="w-full h-full object-cover object-center opacity-15 group-hover:opacity-30 transition-opacity duration-500 scale-105 group-hover:scale-110 filter brightness-90 contrast-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#060907] via-transparent to-transparent opacity-80" />
-
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#080d09]/80 backdrop-blur-md border border-white/10 text-[11px] text-neutral-200">
-                  <span className="font-semibold text-white">{card.title}</span>
-                  <span className="text-[#a3e635] text-xs font-semibold">{card.highlightBadge}</span>
-                </div>
+                {/* Gradient overlay to ensure optimal text contrast over the card background */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0a120c]/85 via-[#060a07]/80 to-[#040604]/92" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(163,230,53,0.08),transparent_70%)]" />
               </div>
 
-              {/* Action Button */}
-              <div className="space-y-4 pt-2 border-t border-white/5">
-                <div className="flex flex-wrap gap-2 text-xs text-neutral-400">
-                  {card.tags.map((tag, tIdx) => (
-                    <span key={tIdx} className="inline-flex items-center gap-1.5 text-neutral-300 text-[11px]">
-                      <span className="w-1 h-1 rounded-full bg-[#a3e635]" />
-                      {tag}
-                    </span>
-                  ))}
+              {/* Card Content sitting on top */}
+              <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[11px] font-bold tracking-wider uppercase text-[#a3e635]">
+                        {card.kicker}
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#a3e635]/15 border border-[#a3e635]/35 text-[#bef264] font-bold shadow-sm">
+                        {card.highlightBadge}
+                      </span>
+                    </div>
+                    <div className="aurix-3d-icon-box w-9 h-9 rounded-xl flex items-center justify-center text-[#a3e635] shrink-0">
+                      <Icon className="w-4 h-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-2.5 group-hover:text-[#bef264] transition-colors drop-shadow-sm">
+                    {card.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
+                    {card.description}
+                  </p>
                 </div>
 
-                <button
-                  onClick={() => onNavigate(card.id)}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold text-neutral-100 bg-[#121c13] hover:bg-[#19271a] border border-[#a3e635]/30 hover:border-[#a3e635]/60 hover:text-white transition-all flex items-center justify-between group/btn cursor-pointer active:scale-95"
-                >
-                  <span>{card.actionLabel}</span>
-                  <ArrowRight className="w-4 h-4 text-[#a3e635] transition-transform group-hover/btn:translate-x-1" />
-                </button>
+                {/* Bottom Tags & Action Button */}
+                <div className="space-y-4 pt-4 border-t border-white/10 mt-auto">
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    {card.tags.map((tag, tIdx) => (
+                      <span
+                        key={tIdx}
+                        className="inline-flex items-center gap-1.5 text-neutral-300 text-[11px] bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-white/10"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635]" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => onNavigate(card.id)}
+                    className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-neutral-100 aurix-3d-glass-btn flex items-center justify-between group/btn cursor-pointer"
+                  >
+                    <span>{card.actionLabel}</span>
+                    <ArrowRight className="w-4 h-4 text-[#a3e635] transition-transform group-hover/btn:translate-x-1" />
+                  </button>
+                </div>
               </div>
             </div>
           );

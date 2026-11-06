@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="128" fill="#040604"/>
+  <circle cx="256" cy="256" r="220" fill="url(#grad)" opacity="0.15"/>
+  <path d="M256 64L80 176V336L256 448L432 336V176L256 64Z" stroke="#a3e635" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="256" r="54" fill="#bef264"/>
+  <path d="M256 64V176M256 336V448M80 176L176 230M336 282L432 336" stroke="#a3e635" stroke-width="20" stroke-linecap="round"/>
+  <defs>
+    <radialGradient id="grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a3e635"/>
+      <stop offset="100%" stop-color="#040604" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

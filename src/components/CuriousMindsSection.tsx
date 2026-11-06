@@ -17,8 +17,8 @@ export const CuriousMindsSection: React.FC<CuriousMindsSectionProps> = ({ onNavi
       lead: 'Learning is not about memorizing lines from a textbook; it is about understanding how things work in the real world.',
       details:
         'AURIX breaks down complex formulas and theories into simple, intuitive ideas with real-life examples so you never have to blindly cram before an exam.',
-      targetNav: 'study-materials',
-      btnLabel: 'Explore Study Materials',
+      targetNav: 'take-test',
+      btnLabel: 'Practise with Tests',
     },
     {
       id: 'critical-thinking',
@@ -75,7 +75,7 @@ export const CuriousMindsSection: React.FC<CuriousMindsSectionProps> = ({ onNavi
         <span className="text-xs uppercase tracking-widest text-[#a3e635] font-semibold mb-2 inline-block">
           How AURIX Helps You
         </span>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight aurix-3d-heading">
           BUILT FOR CURIOUS MINDS
         </h2>
         <p className="mt-3 text-sm sm:text-base text-neutral-300">
@@ -92,13 +92,13 @@ export const CuriousMindsSection: React.FC<CuriousMindsSectionProps> = ({ onNavi
             <button
               key={pillar.id}
               onClick={() => setActiveTab(idx)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap cursor-pointer active:scale-95 ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
                 isSelected
-                  ? 'bg-[#142316] text-[#bef264] border-[#a3e635]/60 shadow-[0_0_20px_rgba(163,230,53,0.2)]'
-                  : 'bg-[#0a100b]/60 text-neutral-400 border-white/5 hover:border-white/15 hover:text-neutral-200'
+                  ? 'aurix-3d-glass-btn text-[#bef264] font-bold border-[#a3e635]/70 transform -translate-y-1'
+                  : 'bg-[#0a100b]/80 text-neutral-300 border border-white/10 hover:border-white/20 hover:text-white hover:-translate-y-0.5'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isSelected ? 'text-[#a3e635]' : 'text-neutral-500'}`} />
+              <Icon className={`w-4 h-4 ${isSelected ? 'text-[#a3e635] drop-shadow-[0_0_6px_#a3e635]' : 'text-neutral-400'}`} />
               <span>{pillar.name}</span>
             </button>
           );
@@ -106,23 +106,23 @@ export const CuriousMindsSection: React.FC<CuriousMindsSectionProps> = ({ onNavi
       </div>
 
       {/* Card */}
-      <div className="aurix-glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-[#a3e635]/20 max-w-4xl mx-auto">
+      <div className="aurix-3d-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#142316] border border-[#a3e635]/30 flex items-center justify-center text-[#a3e635]">
-              <CurrentIcon className="w-5 h-5" />
+            <div className="aurix-3d-icon-box w-11 h-11 rounded-xl flex items-center justify-center text-[#a3e635]">
+              <CurrentIcon className="w-5 h-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
             </div>
             <div>
-              <span className="text-xs font-semibold text-[#a3e635]">
+              <span className="text-xs font-bold text-[#a3e635] tracking-wide">
                 Pillar {activeTab + 1}
               </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-white">
+              <h3 className="text-xl sm:text-2xl font-bold text-white drop-shadow-sm">
                 {currentPillar.simpleTitle}
               </h3>
             </div>
           </div>
 
-          <p className="text-base sm:text-lg text-white font-medium leading-relaxed">
+          <p className="text-base sm:text-lg text-white font-medium leading-relaxed drop-shadow-sm">
             &ldquo;{currentPillar.lead}&rdquo;
           </p>
 
@@ -130,10 +130,10 @@ export const CuriousMindsSection: React.FC<CuriousMindsSectionProps> = ({ onNavi
             {currentPillar.details}
           </p>
 
-          <div className="pt-4 border-t border-white/5">
+          <div className="pt-4 border-t border-white/10">
             <button
               onClick={() => onNavigate(currentPillar.targetNav)}
-              className="aurix-pill-button px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#040604] inline-flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
+              className="aurix-3d-button px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#040604] inline-flex items-center gap-2 cursor-pointer"
             >
               <span>{currentPillar.btnLabel}</span>
               <ArrowRight className="w-4 h-4 text-[#040604]" />

@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "StudentProfile": {
+      "title": "StudentProfile",
+      "description": "Registered student account, school credentials, and streak telemetry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "classLevel": { "type": "string" },
+        "schoolName": { "type": "string" },
+        "schoolBoard": { "type": "string" },
+        "schoolCity": { "type": "string" },
+        "studentIdNumber": { "type": "string" },
+        "rollNumber": { "type": "string" },
+        "streakDays": { "type": "number" },
+        "totalXP": { "type": "number" },
+        "joinedDate": { "type": "string" },
+        "authProvider": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "classLevel"]
+    },
+    "QuizResult": {
+      "title": "QuizResult",
+      "description": "Completed test scorecards, subject breakdowns, and topic mastery.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentEmail": { "type": "string" },
+        "testTitle": { "type": "string" },
+        "classLevel": { "type": "string" },
+        "subject": { "type": "string" },
+        "chapter": { "type": "string" },
+        "date": { "type": "string" },
+        "score": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "correctCount": { "type": "number" },
+        "wrongCount": { "type": "number" },
+        "skippedCount": { "type": "number" },
+        "strongTopics": {
+          "type": "array"
+        },
+        "topicsToPractise": {
+          "type": "array"
+        }
+      },
+      "required": ["id", "studentEmail", "testTitle", "subject", "score"]
+    },
+    "ParentSession": {
+      "title": "ParentSession",
+      "description": "Parental login session, relationship, and linked student child account.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "parentName": { "type": "string" },
+        "email": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "relationship": { "type": "string" },
+        "linkedStudentEmail": { "type": "string" },
+        "loginDate": { "type": "string" }
+      },
+      "required": ["id", "parentName", "email", "linkedStudentEmail"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "StudentProfile",
+      "description": "Collection of student accounts and profiles."
+    },
+    "/quizResults/{resultId}": {
+      "schema": "QuizResult",
+      "description": "Collection of test scorecards and quiz history."
+    },
+    "/parentSessions/{parentSessionId}": {
+      "schema": "ParentSession",
+      "description": "Collection of parental oversight sessions."
+    }
+  }
+}

@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection testing collection
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Student Profiles Collection
+    match /students/{studentId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() || request.resource.data.email != null;
+      allow delete: if isSignedIn();
+    }
+
+    // Quiz & Test Results Collection
+    match /quizResults/{resultId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Parent Sessions Collection
+    match /parentSessions/{parentSessionId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+  }
+}

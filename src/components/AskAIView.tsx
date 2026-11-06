@@ -1,11 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, Send, Bot, User, RotateCcw, AlertCircle, BookOpen, HelpCircle } from 'lucide-react';
+import {
+  Sparkles,
+  Send,
+  Bot,
+  User,
+  RotateCcw,
+  AlertCircle,
+  BookOpen,
+  HelpCircle,
+  ArrowLeft,
+  Mic,
+  MicOff,
+  Globe,
+  ExternalLink,
+} from 'lucide-react';
 import { StudentUser } from '../services/authService';
 
 interface AskAIViewProps {
   currentUser: StudentUser | null;
   initialQuestion?: string;
   onOpenAuth: (mode: 'signin' | 'signup') => void;
+  onBack?: () => void;
 }
 
 interface ChatMessage {
@@ -13,12 +28,14 @@ interface ChatMessage {
   sender: 'user' | 'ai';
   text: string;
   timestamp: string;
+  groundingSources?: Array<{ title: string; url: string }>;
 }
 
 export const AskAIView: React.FC<AskAIViewProps> = ({
   currentUser,
   initialQuestion,
   onOpenAuth,
+  onBack,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -35,8 +52,63 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
   const [selectedSubject, setSelectedSubject] = useState<string>('Mathematics');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  // Initialize Web Speech API Recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const rec = new SpeechRecognition();
+        rec.continuous = false;
+        rec.interimResults = true;
+        rec.lang = 'en-US';
+
+        rec.onresult = (event: any) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          if (transcript) {
+            setInputText(transcript);
+          }
+        };
+
+        rec.onerror = (err: any) => {
+          console.warn('Speech recognition error:', err);
+          setIsListening(false);
+        };
+
+        rec.onend = () => {
+          setIsListening(false);
+        };
+
+        recognitionRef.current = rec;
+      }
+    }
+  }, []);
+
+  const toggleVoiceInput = () => {
+    if (!recognitionRef.current) {
+      alert('Voice input (Web Speech API) is not supported in this browser. You can type your question directly!');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (err) {
+        console.error('Error starting mic:', err);
+      }
+    }
+  };
 
   // Suggested prompt chips as specifically requested by user:
   const suggestedPrompts = [
@@ -66,6 +138,11 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
     if (!text || isLoading) return;
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
 
     setErrorMessage(null);
     const userMsg: ChatMessage = {
@@ -104,6 +181,7 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
         sender: 'ai',
         text: data.reply,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        groundingSources: data.groundingSources || [],
       };
 
       setMessages((prev) => [...prev, aiMsg]);
@@ -132,6 +210,19 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto flex flex-col">
+      {/* Back Button to Previous Page */}
+      {onBack && (
+        <div className="mb-4 text-left">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0e1610] hover:bg-[#142316] border border-white/15 hover:border-[#a3e635]/50 text-xs font-semibold text-neutral-300 hover:text-[#bef264] transition-all cursor-pointer group shadow-sm active:scale-95"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#a3e635] group-hover:-translate-x-1 transition-transform" />
+            <span>← Back to Previous Page</span>
+          </button>
+        </div>
+      )}
+
       {/* View Header */}
       <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -238,6 +329,30 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
                       <div className="prose prose-invert text-xs sm:text-sm leading-relaxed">
                         {msg.text}
                       </div>
+
+                      {/* Google Search Grounding References */}
+                      {msg.groundingSources && msg.groundingSources.length > 0 && (
+                        <div className="mt-3 pt-2.5 border-t border-white/10 space-y-1.5">
+                          <div className="flex items-center gap-1.5 text-[10px] text-[#a3e635] font-bold uppercase tracking-wider">
+                            <Globe className="w-3.5 h-3.5 text-[#a3e635]" />
+                            <span>Real-Time Google Search Grounded Sources:</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5 pt-0.5">
+                            {msg.groundingSources.map((src, i) => (
+                              <a
+                                key={i}
+                                href={src.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#142316] hover:bg-[#1a2d1d] border border-[#a3e635]/30 text-[11px] text-[#bef264] hover:underline transition-all shadow-sm"
+                              >
+                                <span>{src.title}</span>
+                                <ExternalLink className="w-2.5 h-2.5 text-[#a3e635]" />
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div>
@@ -265,7 +380,7 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
               </div>
               <div className="p-3.5 rounded-2xl bg-[#0e1710] border border-[#a3e635]/20 flex items-center gap-2 text-xs text-[#bef264]">
                 <span className="w-2 h-2 rounded-full bg-[#a3e635] animate-pulse" />
-                <span>AURIX AI is formulating a clear explanation for you...</span>
+                <span>AURIX AI is searching live sources &amp; formulating an explanation...</span>
               </div>
             </div>
           )}
@@ -283,7 +398,16 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Bar */}
+        {/* Listening Status Banner */}
+        {isListening && (
+          <div className="px-3.5 py-2 rounded-xl bg-red-950/40 border border-red-500/40 text-xs text-red-300 flex items-center gap-2 my-2 animate-pulse">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shrink-0" />
+            <span className="font-semibold">Microphone Active:</span>
+            <span>Listening to your voice... Speak your question clearly now.</span>
+          </div>
+        )}
+
+        {/* Input Bar with Microphone Access */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -291,14 +415,32 @@ export const AskAIView: React.FC<AskAIViewProps> = ({
           }}
           className="pt-3 border-t border-white/5 flex items-center gap-2"
         >
+          <button
+            type="button"
+            onClick={toggleVoiceInput}
+            title={isListening ? 'Stop Listening' : 'Voice Input (Speak to AI Tutor)'}
+            className={`p-3 rounded-xl transition-all cursor-pointer shrink-0 ${
+              isListening
+                ? 'bg-red-500/20 text-red-400 border border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse'
+                : 'bg-[#142316] hover:bg-[#1a2d1d] border border-[#a3e635]/40 text-[#a3e635] hover:text-white'
+            }`}
+          >
+            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </button>
+
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Type your question or doubt here (e.g. How does photosynthesis work?)..."
+            placeholder={
+              isListening
+                ? 'Listening to your voice...'
+                : 'Type or speak your question here (e.g. How does photosynthesis work?)...'
+            }
             disabled={isLoading}
             className="flex-1 py-3 px-4 rounded-xl bg-[#0a100b] border border-white/10 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-[#a3e635] transition-colors"
           />
+
           <button
             type="submit"
             disabled={isLoading || !inputText.trim()}
