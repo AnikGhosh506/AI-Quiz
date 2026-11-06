@@ -16,9 +16,12 @@ import {
   Layers,
   Bot,
   MessageSquare,
+  Network,
 } from 'lucide-react';
 import { STUDY_MATERIALS, StudyMaterial } from '../data/studyMaterialsData';
 import { playHoverSound } from '../utils/audioEffects';
+import { InteractiveConceptMap } from './InteractiveConceptMap';
+import { FocusSessionWidget } from './FocusSessionWidget';
 
 interface StudyMaterialsViewProps {
   onBack?: () => void;
@@ -34,7 +37,7 @@ export const StudyMaterialsView: React.FC<StudyMaterialsViewProps> = ({
   const [selectedClass, setSelectedClass] = useState<string>('Class 10');
   const [selectedSubject, setSelectedSubject] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'all' | 'chapter_notes' | 'formula_sheet' | 'flashcard' | 'bookmarked'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'concept_map' | 'chapter_notes' | 'formula_sheet' | 'flashcard' | 'bookmarked'>('all');
   const [selectedMaterialModal, setSelectedMaterialModal] = useState<StudyMaterial | null>(null);
 
   // Bookmarking state synced with localStorage
@@ -252,6 +255,17 @@ export const StudyMaterialsView: React.FC<StudyMaterialsViewProps> = ({
           All Resources ({filteredMaterials.length})
         </button>
         <button
+          onClick={() => setActiveTab('concept_map')}
+          className={`flex-1 py-2 px-3 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center justify-center gap-1.5 ${
+            activeTab === 'concept_map'
+              ? 'bg-[#152719] text-[#bef264] border border-[#a3e635]/40 shadow-sm font-bold'
+              : 'text-emerald-400 hover:text-emerald-300'
+          }`}
+        >
+          <Network className="w-3.5 h-3.5 text-[#a3e635]" />
+          <span>🕸️ AI Concept Map</span>
+        </button>
+        <button
           onClick={() => setActiveTab('chapter_notes')}
           className={`flex-1 py-2 px-3 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'chapter_notes'
@@ -293,6 +307,21 @@ export const StudyMaterialsView: React.FC<StudyMaterialsViewProps> = ({
           <span>My Library ({bookmarkedIds.length})</span>
         </button>
       </div>
+
+      {/* Focus Session Pomodoro Timer with Ambient Soundscapes */}
+      <FocusSessionWidget />
+
+      {/* INTERACTIVE CONCEPT MAP SECTION */}
+      {activeTab === 'concept_map' && (
+        <div className="mb-8">
+          <InteractiveConceptMap
+            initialSubject={selectedSubject === 'All' ? 'Physics' : selectedSubject}
+            initialChapter={selectedClass === 'Class 10' ? 'Electricity & Circuits' : 'Quadratic Equations'}
+            onAskAIAboutTopic={onAskAIAboutTopic}
+            onTakeTest={onTakeTest}
+          />
+        </div>
+      )}
 
       {/* Material Cards Grid */}
       {filteredMaterials.length > 0 ? (

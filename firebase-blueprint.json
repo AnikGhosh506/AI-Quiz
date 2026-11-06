@@ -63,6 +63,47 @@
         "loginDate": { "type": "string" }
       },
       "required": ["id", "parentName", "email", "linkedStudentEmail"]
+    },
+    "StudyScheduleEvent": {
+      "title": "StudyScheduleEvent",
+      "description": "Smart AI-suggested or student-created study event calendar entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentEmail": { "type": "string" },
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "chapter": { "type": "string" },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "eventCategory": { "type": "string" },
+        "aiOptimizationRationale": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "studentEmail", "title", "subject", "date"]
+    },
+    "StudyChatMessage": {
+      "title": "StudyChatMessage",
+      "description": "Real-time collaborative chat message with code, LaTeX formulas, and image attachments.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderEmail": { "type": "string" },
+        "senderClass": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "messageType": { "type": "string" },
+        "text": { "type": "string" },
+        "codeSnippet": { "type": "string" },
+        "codeLanguage": { "type": "string" },
+        "latexFormula": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "roomId", "senderName", "text"]
     }
   },
   "firestore": {
@@ -77,6 +118,14 @@
     "/parentSessions/{parentSessionId}": {
       "schema": "ParentSession",
       "description": "Collection of parental oversight sessions."
+    },
+    "/studyScheduleEvents/{eventId}": {
+      "schema": "StudyScheduleEvent",
+      "description": "Collection of AI-suggested and personalized calendar study events."
+    },
+    "/studyChatMessages/{messageId}": {
+      "schema": "StudyChatMessage",
+      "description": "Collection of real-time study room chat messages."
     }
   }
 }

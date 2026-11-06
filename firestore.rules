@@ -39,5 +39,17 @@ service cloud.firestore {
       allow read: if true;
       allow create, update, delete: if true;
     }
+
+    // Study Schedule Events Collection (Smart Study Scheduler)
+    match /studyScheduleEvents/{eventId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Collaborative Study Chat Messages Collection
+    match /studyChatMessages/{messageId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
   }
 }

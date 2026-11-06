@@ -347,6 +347,127 @@ Guidelines:
     }
   });
 
+  // API endpoint for Gemini-powered Interactive Concept Map Generator
+  app.post('/api/generate-concept-map', async (req, res) => {
+    try {
+      const { subject, chapterTitle } = req.body;
+      const targetChapter = chapterTitle || 'Electricity & Circuits';
+      const targetSubject = subject || 'Physics';
+
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        // Fallback pre-built graph if API key is not set
+        return res.json(getFallbackConceptMap(targetSubject, targetChapter));
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
+
+      const prompt = `Generate an interconnected Concept Map node graph for the high school chapter "${targetChapter}" in ${targetSubject}.
+Create 6 to 9 key concept nodes and 7 to 12 relationship edges connecting related concepts.
+
+Return strictly valid JSON matching this schema:
+{
+  "chapterTitle": "${targetChapter}",
+  "nodes": [
+    {
+      "id": "node_1",
+      "label": "Concept Name",
+      "category": "core" | "formula" | "experiment" | "application" | "subtopic",
+      "summary": "2-sentence clear explanation suitable for high school revision.",
+      "keyFormula": "e.g. V = I * R or N/A",
+      "importanceScore": 5
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1",
+      "target": "node_2",
+      "relationLabel": "e.g. Derives from, Measured by, Governs",
+      "strength": 4
+    }
+  ]
+}`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+        },
+      });
+
+      const text = response?.text;
+      if (!text) {
+        return res.json(getFallbackConceptMap(targetSubject, targetChapter));
+      }
+
+      let parsed: any;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        parsed = JSON.parse(cleaned);
+      }
+
+      return res.json(parsed);
+    } catch (err: any) {
+      console.error('Error in /api/generate-concept-map:', err);
+      const { subject, chapterTitle } = req.body;
+      return res.json(getFallbackConceptMap(subject || 'Physics', chapterTitle || 'Electricity & Circuits'));
+    }
+  });
+
+  function getFallbackConceptMap(subject: string, chapter: string) {
+    if (subject.toLowerCase().includes('math') || chapter.toLowerCase().includes('quadratic')) {
+      return {
+        chapterTitle: chapter || 'Quadratic Equations',
+        nodes: [
+          { id: 'n1', label: 'Quadratic Equation Standard Form', category: 'core', summary: 'General second-degree polynomial equation ax² + bx + c = 0 where a ≠ 0.', keyFormula: 'ax^2 + bx + c = 0', importanceScore: 5 },
+          { id: 'n2', label: 'Discriminant (D)', category: 'formula', summary: 'Value b² - 4ac that determines the nature of roots (real, equal, or complex).', keyFormula: 'D = b^2 - 4ac', importanceScore: 5 },
+          { id: 'n3', label: 'Quadratic Formula', category: 'formula', summary: 'Universal formula to solve any quadratic equation.', keyFormula: 'x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}', importanceScore: 5 },
+          { id: 'n4', label: 'Completing the Square', category: 'subtopic', summary: 'Algebraic method of restructuring polynomial into a perfect square trinomial.', keyFormula: '(x + d)^2 = e', importanceScore: 4 },
+          { id: 'n5', label: 'Sum & Product of Roots', category: 'formula', summary: 'Relationships between coefficients and roots: α + β = -b/a and αβ = c/a.', keyFormula: '\\alpha + \\beta = -b/a, \\quad \\alpha\\beta = c/a', importanceScore: 4 },
+          { id: 'n6', label: 'Projectile Motion Applications', category: 'application', summary: 'Parabolic trajectory height calculations in physics and engineering.', keyFormula: 'h(t) = -1/2 g t^2 + v_0 t + h_0', importanceScore: 4 },
+        ],
+        edges: [
+          { source: 'n1', target: 'n2', relationLabel: 'Evaluated by', strength: 5 },
+          { source: 'n2', target: 'n3', relationLabel: 'Used inside', strength: 5 },
+          { source: 'n1', target: 'n4', relationLabel: 'Solved via', strength: 4 },
+          { source: 'n1', target: 'n5', relationLabel: 'Yields properties', strength: 4 },
+          { source: 'n3', target: 'n6', relationLabel: 'Models real-world', strength: 5 },
+        ],
+      };
+    }
+
+    return {
+      chapterTitle: chapter || 'Electricity & Circuits',
+      nodes: [
+        { id: 'n1', label: 'Electric Current (I)', category: 'core', summary: 'Rate of flow of electric charges Q through a cross-section per unit time t.', keyFormula: 'I = Q / t', importanceScore: 5 },
+        { id: 'n2', label: 'Potential Difference (V)', category: 'core', summary: 'Work done in moving a unit charge from one point to another in a circuit.', keyFormula: 'V = W / Q', importanceScore: 5 },
+        { id: 'n3', label: "Ohm's Law", category: 'formula', summary: 'Current flowing through a conductor is directly proportional to potential difference across its ends.', keyFormula: 'V = I \\cdot R', importanceScore: 5 },
+        { id: 'n4', label: 'Electrical Resistance (R)', category: 'formula', summary: 'Property of conductor opposing the flow of electric current.', keyFormula: 'R = \\rho \\cdot \\frac{L}{A}', importanceScore: 4 },
+        { id: 'n5', label: 'Resistors in Series & Parallel', category: 'subtopic', summary: 'Series adds resistances R_eq = R1+R2; Parallel adds reciprocals 1/R_eq = 1/R1+1/R2.', keyFormula: 'R_{series} = R_1 + R_2, \\quad 1/R_{parallel} = 1/R_1 + 1/R_2', importanceScore: 5 },
+        { id: 'n6', label: "Joule's Heating Effect", category: 'experiment', summary: 'Heat produced in a resistor is proportional to square of current, resistance, and time.', keyFormula: 'H = I^2 \\cdot R \\cdot t', importanceScore: 4 },
+        { id: 'n7', label: 'Household Fuse & Circuit Breakers', category: 'application', summary: 'Safety device with low melting point that breaks circuit during overload/short circuit.', keyFormula: 'P = V \\cdot I', importanceScore: 4 },
+      ],
+      edges: [
+        { source: 'n1', target: 'n3', relationLabel: 'Governed by', strength: 5 },
+        { source: 'n2', target: 'n3', relationLabel: 'Drives current in', strength: 5 },
+        { source: 'n3', target: 'n4', relationLabel: 'Defines property', strength: 5 },
+        { source: 'n4', target: 'n5', relationLabel: 'Combined as', strength: 4 },
+        { source: 'n3', target: 'n6', relationLabel: 'Produces heat via', strength: 4 },
+        { source: 'n6', target: 'n7', relationLabel: 'Protected by', strength: 4 },
+      ],
+    };
+  }
+
   // ==========================================
   // PERSISTENT DATABASE API ENDPOINTS
   // Ensures accounts and active login sessions survive page reloads and refreshes

@@ -18,6 +18,9 @@ import { ParentPasswordModal } from './components/ParentPasswordModal';
 import { GlobalLeaderboard } from './components/GlobalLeaderboard';
 import { StudyMaterialsView } from './components/StudyMaterialsView';
 import { PrintReportView } from './components/PrintReportView';
+import { VirtualStudyRoomsView } from './components/VirtualStudyRoomsView';
+import { SmartStudySchedulerView } from './components/SmartStudySchedulerView';
+import { AIRecommendedDailyQuiz } from './components/AIRecommendedDailyQuiz';
 import { NotificationCenter } from './components/NotificationCenter';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { authService, StudentUser, ParentUser } from './services/authService';
@@ -246,6 +249,13 @@ export default function App() {
               onExplore={handleNavigate}
             />
 
+            {/* AI Recommended Daily Practice Quiz Sprint */}
+            <AIRecommendedDailyQuiz
+              currentUser={currentUser}
+              quizResults={authService.getQuizResults()}
+              onStartQuiz={() => handleNavigate('take-test')}
+            />
+
             {/* Clearly labelled feature section cards in student-friendly language */}
             <FeatureCards onNavigate={handleNavigate} />
 
@@ -406,6 +416,25 @@ export default function App() {
         {activeSection === 'print-report' && (
           <PrintReportView
             currentUser={currentUser}
+            onBack={handleGoBack}
+          />
+        )}
+
+        {/* Virtual Peer Study Rooms Page */}
+        {activeSection === 'study-rooms' && (
+          <VirtualStudyRoomsView
+            currentUser={currentUser}
+            onOpenAuth={handleOpenAuth}
+            onBack={handleGoBack}
+          />
+        )}
+
+        {/* Smart Study Scheduler Page */}
+        {activeSection === 'study-scheduler' && (
+          <SmartStudySchedulerView
+            currentUser={currentUser}
+            onOpenAuth={handleOpenAuth}
+            onNavigateToFeature={handleNavigate}
             onBack={handleGoBack}
           />
         )}

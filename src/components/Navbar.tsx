@@ -23,6 +23,7 @@ import {
   FileText,
   Bell,
   Printer,
+  Calendar,
 } from 'lucide-react';
 import { StudentUser, ParentUser } from '../services/authService';
 import { ThemeSwitcher } from './ThemeSwitcher';
@@ -86,6 +87,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'Home', id: 'home', icon: Home },
     { label: 'Take a Test', id: 'take-test', icon: BookOpen },
     { label: 'Study Materials', id: 'study-materials', icon: FileText },
+    { label: 'Study Rooms', id: 'study-rooms', icon: Users },
+    { label: 'Study Scheduler', id: 'study-scheduler', icon: Calendar },
     { label: 'My Progress', id: 'my-progress', icon: TrendingUp },
     { label: 'Ask AI', id: 'ask-ai', icon: Bot },
     { label: 'Play Games', id: 'play-games', icon: Gamepad2 },
