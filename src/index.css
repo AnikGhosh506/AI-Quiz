@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    background-color: #040604;
+    color: #e5e7eb;
+    overflow-x: hidden;
+  }
+}
+
+/* Glassmorphism and ambient atmospheric effects */
+.aurix-glass {
+  background: rgba(10, 16, 11, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(132, 204, 22, 0.12);
+}
+
+.aurix-glass-card {
+  background: linear-gradient(135deg, rgba(14, 22, 15, 0.72) 0%, rgba(6, 10, 7, 0.88) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(132, 204, 22, 0.15);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aurix-glass-card:hover {
+  border-color: rgba(163, 230, 53, 0.38);
+  box-shadow: 0 12px 40px -12px rgba(132, 204, 22, 0.18), 0 0 20px 0 rgba(132, 204, 22, 0.08) inset;
+  transform: translateY(-3px);
+}
+
+.aurix-pill-button {
+  background: linear-gradient(135deg, #a3e635 0%, #65a30d 100%);
+  color: #040604;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aurix-pill-button:hover {
+  background: linear-gradient(135deg, #bef264 0%, #84cc16 100%);
+  box-shadow: 0 0 24px rgba(163, 230, 53, 0.45);
+  transform: translateY(-1px);
+}
+
+.aurix-subtle-glow {
+  box-shadow: 0 0 80px 40px rgba(132, 204, 22, 0.06);
+}
+
+/* Subtle botanical organic noise overlay */
+.aurix-vignette {
+  background: radial-gradient(circle at 50% 20%, transparent 40%, rgba(4, 6, 4, 0.75) 85%, #040604 100%);
+}

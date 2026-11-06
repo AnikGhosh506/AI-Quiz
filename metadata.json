@@ -1,0 +1,8 @@
+{
+  "name": "Remix AURIX — Intelligence Beyond Imagination",
+  "description": "An intelligent educational platform where students test their knowledge, discover weaknesses, interact with an AI tutor, compete with peers, and refresh their minds.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
